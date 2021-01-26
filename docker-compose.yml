@@ -1,0 +1,8 @@
+version: '2'
+services:
+  perf:
+    image: lol:perf
+    volumes:
+      - .:/workdir
+    cap_add:
+      - SYS_ADMIN

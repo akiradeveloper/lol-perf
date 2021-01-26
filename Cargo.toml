@@ -1,0 +1,15 @@
+[package]
+name = "lol-perf"
+version = "0.1.0"
+authors = ["Akira Hayakawa <ruby.wktk@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+clap = "3.0.0-beta.2"
+lol-core = { git = "https://github.com/akiradeveloper/lol", branch = "master" }
+
+[profile.release]
+debug = true
