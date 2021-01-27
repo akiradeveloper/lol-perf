@@ -2,3 +2,4 @@ Cargo.lock
 /target
 perf.*
 flamegraph.svg
+callgrind.out
