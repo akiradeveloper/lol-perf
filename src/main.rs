@@ -62,6 +62,10 @@ async fn main() {
     let buf = vec![0; 1048576];
     let mut n_resp = 0;
     let start_time = Instant::now();
+
+    let mut term = 1;
+    let mut term_n_resp = 0;
+    let mut term_start_time = Instant::now();
     for i in 1.. {
         // do IO
         let res = conn.request_commit(lol_core::proto_compiled::CommitReq {
@@ -70,16 +74,27 @@ async fn main() {
         })
         .await;
         if res.is_ok() {
+            term_n_resp += 1;
             n_resp += 1;
         } else {
             eprintln!("I/O failed ({})", i);
         }
-        if Instant::now() - start_time >= Duration::from_secs(10) {
+        let now = Instant::now();
+        if now - start_time >= Duration::from_secs(10) {
             break;
+        }
+        let term_elapsed = now - term_start_time;
+        if term_elapsed >= Duration::from_secs(1) && term_n_resp > 0 {
+            eprintln!("[term {}] ave. response time: {}[ms]",  term, (term_elapsed / term_n_resp).as_millis());
+
+            // Reset the counter
+            term += 1;
+            term_n_resp = 0;
+            term_start_time = Instant::now();
         }
     }
     let elapsed = Instant::now() - start_time;
-    println!("response time per iteration: {}[ms]", (elapsed / n_resp).as_millis());
+    eprintln!("[total] ave. response time: {}[ms]", (elapsed / n_resp).as_millis());
 }
 
 struct NoopApp {}
