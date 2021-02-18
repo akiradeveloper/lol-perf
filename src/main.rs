@@ -12,8 +12,16 @@ fn available_port() -> std::io::Result<u16> {
     TcpListener::bind("localhost:0").map(|x| x.local_addr().unwrap().port())
 }
 
+#[derive(Clap)]
+struct Opts {
+    #[clap(long, default_value = "10")]
+    runtime: u64,
+}
+
 #[tokio::main]
 async fn main() {
+    let opts = Opts::parse();
+
     let n = 4;
     let mut ports = vec![];
     for _ in 0..n {
@@ -80,7 +88,7 @@ async fn main() {
             eprintln!("I/O failed ({})", i);
         }
         let now = Instant::now();
-        if now - start_time >= Duration::from_secs(10) {
+        if now - start_time >= Duration::from_secs(opts.runtime) {
             break;
         }
         let term_elapsed = now - term_start_time;
