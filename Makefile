@@ -5,6 +5,9 @@ docker-build:
 binary:
 	cargo build --release
 
+stress:
+	cargo run --release -- --runtime=300
+
 flamegraph:
 	cargo flamegraph
 
