@@ -1,10 +1,8 @@
 use clap::Clap;
 use std::net::TcpListener;
 use std::time::{Instant, Duration};
-use lol_core::proto_compiled::{AddServerReq};
-use lol_core::connection::connect;
+use lol_core::proto_compiled::{AddServerReq, raft_client::RaftClient};
 use tonic::transport::channel::Endpoint;
-use async_trait::async_trait;
 use lol_core::compat::{RaftAppCompat, ToRaftApp};
 use lol_core::{Config, Index, RaftCore, TunableConfig};
 
@@ -52,7 +50,7 @@ async fn main() {
 
     let leader_id = format!("http://127.0.0.1:{}", ports[0]);
     let endpoint = Endpoint::from_shared(leader_id.clone()).unwrap();
-    let mut conn = connect(endpoint).await.unwrap();
+    let mut conn = RaftClient::connect(endpoint).await.unwrap();
 
     // Set up the cluster
     for i in 0..n {
@@ -106,25 +104,25 @@ async fn main() {
 }
 
 struct NoopApp {}
-#[async_trait]
+#[tonic::async_trait]
 impl RaftAppCompat for NoopApp {
-    async fn process_message(&self, x: &[u8]) -> anyhow::Result<Vec<u8>> {
+    async fn process_message(&self, _: &[u8]) -> anyhow::Result<Vec<u8>> {
         Ok(Vec::new())
     }
     async fn apply_message(
         &self,
-        x: &[u8],
+        _: &[u8],
         _: Index,
     ) -> anyhow::Result<(Vec<u8>, Option<Vec<u8>>)> {
         Ok((Vec::new(), None))
     }
-    async fn install_snapshot(&self, x: Option<&[u8]>, _: Index) -> anyhow::Result<()> {
+    async fn install_snapshot(&self, _: Option<&[u8]>, _: Index) -> anyhow::Result<()> {
         Ok(())
     }
     async fn fold_snapshot(
         &self,
-        old_snapshot: Option<&[u8]>,
-        xs: Vec<&[u8]>,
+        _: Option<&[u8]>,
+        _: Vec<&[u8]>,
     ) -> anyhow::Result<Vec<u8>> {
         Ok(Vec::new())
     }

@@ -8,11 +8,11 @@ edition = "2018"
 
 [dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
-tonic = "0.4"
-clap = "3.0.0-beta.2"
+tonic = "0.5"
+clap = "3.0.0-beta.4"
 anyhow = "1"
 async-trait = "0.1"
-lol-core = { git = "https://github.com/akiradeveloper/lol", branch = "master" }
+lol-core = "0.7" 
 
 [profile.release]
 debug = true

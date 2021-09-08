@@ -3,6 +3,6 @@ services:
   perf:
     image: lol:perf
     volumes:
-      - .:/workdir
+      - .:/work
     cap_add:
       - SYS_ADMIN

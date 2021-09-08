@@ -1,10 +1,6 @@
 docker-build:
 	docker build -t lol:perf - < Dockerfile
 
-.PHONY: binary
-binary:
-	cargo build --release
-
 stress:
 	cargo run --release -- --runtime=300
 
